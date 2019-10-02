@@ -20,8 +20,7 @@ class Search extends React.Component {
   }
 
   _displayDetailForFilm = (idFilm) => {
-   console.log("Display film with id " + idFilm)
-   this.props.navigation.navigate("FilmDetail", {idFilm: idFilm})
+       this.props.navigation.navigate("FilmDetail", {idFilm: idFilm})
  }
 
   _displayLoading() {
@@ -49,14 +48,14 @@ class Search extends React.Component {
       films: []
     }, () => {
       // J'utilise la paramètre length sur mon tableau de films pour vérifier qu'il y a bien 0 film
-      console.log("Page : " + this.page + " / TotalPages : " + this.totalPages + " / Nombre de films : " + this.state.films.length)
+      //console.log("Page : " + this.page + " / TotalPages : " + this.totalPages + " / Nombre de films : " + this.state.films.length)
     })
 
     this._loadFilms()
   }
 
   _loadFilms() {
-    console.log(this.state.searchedText)
+    //console.log(this.state.searchedText)
     if(this.searchedText.length > 0) {
       this.setState({isLoading: true})
       getFilmsFromApiWithSearchedText(this.searchedText, this.page+1).then(data => {

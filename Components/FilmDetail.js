@@ -6,6 +6,7 @@ import { getFilmDetailFromApi } from '../API/TMDBApi'
 import { getImageFromApi } from '../API/TMDBApi'
 import moment from 'moment'
 import numeral from 'numeral'
+import { connect } from 'react-redux'
 
 class FilmDetail extends React.Component {
   constructor(props) {
@@ -37,7 +38,6 @@ class FilmDetail extends React.Component {
 
   _displayFilm() {
     if (this.state.film != undefined) {
-      console.log(getImageFromApi(this.state.film.backdrop_path))
       return (
         <ScrollView style={styles.scrollview_container}>
           <View style={styles.image_container}>
@@ -71,6 +71,7 @@ class FilmDetail extends React.Component {
   }
 
   render() {
+    console.log(this.props)
     return (
       <View style={styles.main_container}>
         {this._displayLoading()}
@@ -124,4 +125,15 @@ const styles = StyleSheet.create({
   }
 })
 
-export default FilmDetail
+//permet de connecter le state de l'application au component FilmDetail.
+//If this argument is specified, the new component will subscribe to Redux store updates.
+//This means that any time the store is updated, mapStateToProps will be called.
+//The results of mapStateToProps must be a plain object, which will be merged into the component’s props.
+const mapStateToProps = (state) => {
+  //return state -> retourne tout le state, pas une bonne pratique
+  return {
+    favoritesFilm: state.favoritesFilm
+  }
+}
+
+export default connect(mapStateToProps)(FilmDetail)
