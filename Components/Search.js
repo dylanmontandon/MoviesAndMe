@@ -5,6 +5,7 @@ import { getFilmsFromApiWithSearchedText } from '../API/TMDBApi'
 
 import React from 'react'
 import { StyleSheet, View, TextInput, Button, Text, FlatList, ActivityIndicator } from 'react-native'
+import { connect } from 'react-redux'
 
 class Search extends React.Component {
 
@@ -70,7 +71,8 @@ class Search extends React.Component {
   }
 
   render() {
-    console.log(this.props)
+    console.log("search props: " + this.props)
+    console.log("favoritesFilm: " + this.props.favoritesFilm)
     return (
       <View style={styles.main_container}>
         <TextInput
@@ -83,7 +85,14 @@ class Search extends React.Component {
         <FlatList
           data={this.state.films}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({item}) => <FilmItem film={item} displayDetailForFilm={this._displayDetailForFilm} />}
+          renderItem={({item}) =>
+            <FilmItem
+              film={item}
+              displayDetailForFilm={this._displayDetailForFilm}
+              // Ajout d'une props isFilmFavorite pour indiquer à l'item d'afficher un 🖤 ou non
+              isFilmFavorite={(this.props.favoritesFilm.findIndex(film => film.id === item.id) !== -1) ? true : false}
+            />}
+          extraData={this.props.favoritesFilm}
           onEndReachedThreshold ={0.5}
           onEndReached= { () => {
             if (this.page < this.totalPages) {
@@ -121,4 +130,15 @@ const styles = StyleSheet.create({
  }
 })
 
-export default Search
+//permet de connecter le state de l'application au component FilmDetail.
+//If this argument is specified, the new component will subscribe to Redux store updates.
+//This means that any time the store is updated, mapStateToProps will be called.
+//The results of mapStateToProps must be a plain object, which will be merged into the component’s props.
+const mapStateToProps = (state) => {
+  //return state -> retourne tout le state, pas une bonne pratique
+  return {
+    favoritesFilm: state.favoritesFilm
+  }
+}
+
+export default connect(mapStateToProps)(Search)

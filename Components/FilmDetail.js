@@ -1,7 +1,7 @@
 // Components/FilmDetail.js
 
 import React from 'react'
-import { StyleSheet, View, Text, ActivityIndicator, ScrollView, Image } from 'react-native'
+import { StyleSheet, View, Text, ActivityIndicator, ScrollView, Image, Button, TouchableOpacity } from 'react-native'
 import { getFilmDetailFromApi } from '../API/TMDBApi'
 import { getImageFromApi } from '../API/TMDBApi'
 import moment from 'moment'
@@ -26,6 +26,11 @@ class FilmDetail extends React.Component {
     })
   }
 
+  componentDidUpdate() {
+    //console.log("componentDidUpdate : ")
+    //console.log(this.props.favoritesFilm)
+  }
+
   _displayLoading() {
     if (this.state.isLoading) {
       return (
@@ -35,6 +40,13 @@ class FilmDetail extends React.Component {
       )
     }
   }
+
+  _toggleFavorite() {
+        // Définition de notre action ici
+        const action = { type: "TOGGLE_FAVORITE", value: this.state.film }
+        // dispatch l'action au Store
+        this.props.dispatch(action)
+    }
 
   _displayFilm() {
     if (this.state.film != undefined) {
@@ -48,6 +60,10 @@ class FilmDetail extends React.Component {
           </View>
           <View style={styles.title_container}>
             <Text style={styles.title_text}>{this.state.film.title}</Text>
+            <TouchableOpacity
+                onPress={() => this._toggleFavorite()}>
+                {this._displayFavoriteImage()}
+            </TouchableOpacity>
           </View>
           <View style={styles.description_container}>
             <Text style={styles.description_text}>{this.state.film.overview}</Text>
@@ -70,8 +86,22 @@ class FilmDetail extends React.Component {
     }
   }
 
+  _displayFavoriteImage() {
+    var sourceImage = require('../Images/ic_favorite_border.png')
+    if (this.props.favoritesFilm.findIndex(item => item.id === this.state.film.id) !== -1) {
+      // Film dans nos favoris
+      sourceImage = require('../Images/ic_favorite.png')
+    }
+    return (
+      <Image
+        style={styles.favorite_image}
+        source={sourceImage}
+      />
+    )
+}
+
   render() {
-    console.log(this.props)
+    //console.log(this.props)
     return (
       <View style={styles.main_container}>
         {this._displayLoading()}
@@ -122,6 +152,13 @@ const styles = StyleSheet.create({
   detail_container: {
     flex: 1,
     margin: 10
+  },
+  favorite_container: {
+    alignItems: 'center', // Alignement des components enfants sur l'axe secondaire, X ici
+  },
+  favorite_image: {
+    width: 40,
+    height: 40
   }
 })
 
@@ -136,4 +173,10 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(FilmDetail)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch: (action) => { dispatch(action) }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FilmDetail)
