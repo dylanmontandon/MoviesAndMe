@@ -7,6 +7,7 @@ import { getImageFromApi } from '../API/TMDBApi'
 import moment from 'moment'
 import numeral from 'numeral'
 import { connect } from 'react-redux'
+import EnlargeShrink from '../Animations/EnlargeShrink'
 
 class FilmDetail extends React.Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class FilmDetail extends React.Component {
     }
     // Ne pas oublier de binder la fonction _shareFilm sinon, lorsqu'on va l'appeler depuis le headerRight de la navigation, this.state.film sera undefined et fera planter l'application
     this._shareFilm = this._shareFilm.bind(this)
+    this._toggleFavorite = this._toggleFavorite.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -73,7 +75,7 @@ class FilmDetail extends React.Component {
         film: this.props.favoritesFilm[favoriteFilmIndex]}, () => { this._updateNavigationParams() })
       return
     }
-    
+
     // Le film n'est pas dans nos favoris, on n'a pas son détail
     // On appelle l'API pour récupérer son détail
     this.setState({ isLoading: true })
@@ -139,7 +141,6 @@ class FilmDetail extends React.Component {
               return company.name;
             }).join(" / ")}</Text>
           </View>
-
         </ScrollView>
       )
     }
@@ -147,17 +148,21 @@ class FilmDetail extends React.Component {
 
   _displayFavoriteImage() {
     var sourceImage = require('../Images/ic_favorite_border.png')
+    var shouldEnlarge = false // Par défaut, si le film n'est pas en favoris, on veut qu'au clic sur le bouton, celui-ci s'agrandisse => shouldEnlarge à true
     if (this.props.favoritesFilm.findIndex(item => item.id === this.state.film.id) !== -1) {
-      // Film dans nos favoris
       sourceImage = require('../Images/ic_favorite.png')
+      shouldEnlarge = true // Si le film est dans les favoris, on veut qu'au clic sur le bouton, celui-ci se rétrécisse => shouldEnlarge à false
     }
     return (
-      <Image
-        style={styles.favorite_image}
-        source={sourceImage}
-      />
+      <EnlargeShrink
+        shouldEnlarge={shouldEnlarge}>
+        <Image
+          style={styles.favorite_image}
+          source={sourceImage}
+        />
+      </EnlargeShrink>
     )
-}
+  }
 
   render() {
     //console.log(this.props)
