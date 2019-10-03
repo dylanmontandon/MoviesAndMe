@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs'
 import Search from '../Components/Search'
 import FilmDetail from '../Components/FilmDetail'
 import Favorites from '../Components/Favorites'
+import Test from '../Components/Test'
 
 const SearchStackNavigator = createStackNavigator({
   Search: { // Ici j'ai appelé la vue "Search" mais on peut mettre ce que l'on veut. C'est le nom qu'on utilisera pour appeler cette vue
@@ -39,6 +40,15 @@ const FavoriteStackNavigator = createStackNavigator({
   }
 })
 
+const TestStackNavigator = createStackNavigator({
+  Favorites: {
+    screen: Test,
+    navigationOptions: {
+      title: 'Test'
+    }
+  }
+})
+
 const MoviesTabNavigator = createBottomTabNavigator(
   {
     Search: {
@@ -57,6 +67,16 @@ const MoviesTabNavigator = createBottomTabNavigator(
         tabBarIcon: () => {
           return <Image
             source={require('../Images/ic_favorite.png')}
+            style={styles.icon}/>
+        }
+      }
+    },
+    Test: {
+      screen: TestStackNavigator,
+      navigationOptions: {
+        tabBarIcon: () => {
+          return <Image
+            source={require('../Images/ic_gear.png')}
             style={styles.icon}/>
         }
       }
